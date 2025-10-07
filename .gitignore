@@ -56,3 +56,6 @@ workspace/
 # Ignore everything in pico8-runtime except README.md
 pico8-runtime/*
 !pico8-runtime/README.md
+
+# Warp AI Configuration
+WARP.md

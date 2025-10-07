@@ -1,16 +1,14 @@
 # PICO-8 Development Environment
 
-A comprehensive, self-contained PICO-8 development environment optimized for external editors and fantasy console immersion.
+Self-contained PICO-8 lite development environment.
 
 ## 🎯 What This Is
 
 A **complete PICO-8 development setup** that provides:
 
-- **🎮 Fantasy Console Immersion**: Clean PICO-8 experience with only cart directories visible
-- **📝 External Editor Optimized**: Perfect for Warp, VS Code, or any text editor  
-- **⚡ Just-Based Automation**: Simple, powerful task automation with `just` commands
+- **⚡ Just-Based Automation**: Simple task automation with `just` commands
 - **📦 Fully Portable**: Copy entire directory to any macOS machine and it works
-- **🧹 Organized Workflow**: Clear separation of development vs downloaded carts
+- **🧹 Organized Structure**: Store templates in templates
 
 ## 🏗️ Directory Structure
 
@@ -19,22 +17,18 @@ pico-8/                           # Development environment root
 ├── justfile                      # Task automation (recipes)
 ├── README.md                     # This documentation
 ├── STATUS.md                     # Detailed change log
-├── WARP.md                       # AI assistant rules for Warp
 ├── pico8                         # PICO-8 launch script
 ├── templates/                    # Cart templates
 │   ├── basic-template/           # Simple project structure
 │   └── project-template/         # Advanced modular structure
 ├── backups/                      # Development backups
 ├── pico8-runtime/                # PICO-8 executable & docs
-│   ├── PICO-8.app               # The fantasy console
-│   ├── pico-8_manual.txt        # Official manual
-│   └── license.txt              # License
 └── workspace/                    # PICO-8 workspace (where magic happens)
     ├── carts/                   # 🎯 PICO-8 root directory
     │   ├── mycarts/             # Your development projects
     │   └── other/               # Downloaded/shared carts
     ├── screenshots/             # PICO-8 screenshots
-    ├── bbs/                     # BBS downloads (browseable!)
+    ├── bbs/                     # BBS downloads
     ├── backup/                  # PICO-8 auto-backups
     ├── cdata/                   # Save game data
     └── config.txt               # PICO-8 configuration
@@ -46,11 +40,11 @@ pico-8/                           # Development environment root
 
 1. **macOS** (Intel or Apple Silicon)
 2. **Just** task automation: `brew install just`
-3. **PICO-8** (we'll handle the setup)
+3. **PICO-8** The Fantasy Console from Lexaloffle
 
 ### Installation
 
-1. **Get PICO-8**: Download from [lexaloffle.com](https://www.lexaloffle.com/pico-8.php)
+1. **Get PICO-8**: Download from [lexaloffle.com](https://www.lexaloffle.com)
 2. **Copy PICO-8.app** to `pico8-runtime/` directory
 3. **Initialize environment**:
    ```bash
@@ -70,10 +64,10 @@ just carts
 
 # Create your first cart
 cd workspace/carts/mycarts
-just make hello-world
+just make hello-pico-8 coolgame
 
-# Launch PICO-8 to see your cart
-just run hello-world
+# Launch PICO-8 to see your cart and start editing
+just run hello-pico-8
 ```
 
 ## 📋 Commands Reference
@@ -137,7 +131,7 @@ just run my-awesome-game         # Looks for cart in current directory
 
 ### **Managing Downloads**
 
-Downloaded carts from the community? Put them here:
+Downloaded carts from the community? Store them in workspace/carts/other:
 ```bash
 cp ~/Downloads/cool-community-game.p8 workspace/carts/other/
 ```
@@ -146,9 +140,7 @@ Now they're organized and `just carts` will show them separately.
 
 ## 🎯 PICO-8 Experience
 
-### **Fantasy Console Immersion**
-
-When you launch PICO-8, you'll only see cart directories - no system clutter!
+When you launch PICO-8, you'll only see cart directories
 
 ```
 > LS                    # Clean view:
@@ -165,21 +157,11 @@ When you launch PICO-8, you'll only see cart directories - no system clutter!
   COOL-COMMUNITY-GAME.P8
 ```
 
-### **BBS Integration**
-
-The BBS (Bulletin Board System) downloads are fully browseable:
-
-```
-> CD ../BBS/CARTS      # Navigate to BBS downloads
-> LS                   # Browse community carts
-> LOAD SOME-COOL-CART  # Play community creations
-```
-
 ## 🎨 Templates
 
 Templates provide starting points for different types of projects:
 
-### **Basic Template**
+### **Basic Templates**
 - Single `.p8` file
 - Perfect for simple games or prototypes
 - Usage: `just make my-game basic-template`
@@ -190,21 +172,25 @@ Templates provide starting points for different types of projects:
 - Perfect for larger, more complex games
 - Usage: `just make my-game project-template`
 
-### **Creating Custom Templates**
+### **Creating Templates**
+
+Templates are either a single .p8 file or directories containing .p8 files.
+These are just reusable blueprints to get started.
 
 1. Add your template to `templates/`
 2. Can be a single `.p8` file or entire directory
-3. Available immediately via `just make`
+3. Applied to a new project via `just make [name of the game] [template name]`
+4. You can see a list of all templates you have via just templates
 
 ## ⚡ Advanced Features
 
 ### **External Editor Workflow**
 
-This environment is optimized for external editors:
+PICO-8 makes it easy to code using external editors:
 
-1. **Edit in Warp/VS Code**: Work with `.p8` files in your favorite editor
-2. **Auto-reload**: PICO-8 shows "EXTERNAL CHANGES" when files change
-3. **Quick reload**: Press `CTRL-R` in PICO-8 to reload
+1. Work with `.p8` files in your favorite editor
+2. PICO-8 shows "EXTERNAL CHANGES" when files change
+3. Press `CTRL-R` in PICO-8 to reload
 4. **Version control ready**: `.p8` files work great with git
 
 ### **Launch Script Features**
@@ -293,7 +279,7 @@ This environment can be customized:
 
 ## 📚 Resources
 
-- **PICO-8 Manual**: `pico8-runtime/pico-8_manual.txt`
+- **PICO-8 Manual**: `pico8-runtime/pico-8_manual.txt
 - **PICO-8 Website**: [lexaloffle.com/pico-8.php](https://www.lexaloffle.com/pico-8.php)
 - **Just Documentation**: [just.systems](https://just.systems)
 - **Community**: [PICO-8 BBS](https://bbs.lexaloffle.com)
