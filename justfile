@@ -17,13 +17,157 @@ other_dir := carts_dir / "other"
 
 # Show available recipes and environment info
 default:
-    @echo "🎮 PICO-8 Development Environment"
+    @just _help-overview
+
+# Contextual help for recipes and tooling
+[no-cd]
+help topic="overview":
+    #!/usr/bin/env zsh
+    set -euo pipefail
+
+    topic="{{ topic }}"
+    topic="${topic:l}"
+
+    case "$topic" in
+        ""|"overview") just _help-overview ;;
+        run) just _help-run ;;
+        make) just _help-make ;;
+        carts) just _help-carts ;;
+        templates) just _help-templates ;;
+        init) just _help-init ;;
+        "pico-8"|"pico8") just _help-pico ;;
+        *) just _help-unknown "$topic" ;;
+    esac
+
+_help-overview:
+    @echo "🕹️ PICO-8 Development Environment"
     @echo ""
-    @echo "📁 Current: {{ invocation_directory() }}"
-    @echo "🏠 Workspace: {{ workspace_dir }}"
+    @echo "📍 You are here: {{ invocation_directory() }}"
+    @echo "🏠 Workspace root: {{ workspace_dir }}"
     @echo ""
-    @just --list
-    @just _init-summary
+    @echo "📜 Recipes (try 'just help <name>' for details):"
+    @echo "  just run         Launch PICO-8 with optional [cart filename] and/or [PICO-8 switches]"
+    @echo "  just make        Create carts in the current directory (empty or from templates)"
+    @echo "  just carts       Browse carts in workspace/carts/mycarts and workspace/carts/other"
+    @echo "  just templates   List starter templates stored in templates/"
+    @echo "  just init        Prepare the environment and manage the local PICO-8 config"
+    @echo "  just help pico-8 Show common PICO-8 command-line switches and docs links"
+    @echo ""
+    @echo "📚 Quick Example:"
+    @echo "  just run -splore       # Open PICO-8's Splore browser"
+    @echo ""
+    @echo "🧭 Tip: Use 'just help run' (or make/carts/templates/init) for detailed guidance."
+    @echo ""
+    @echo "🕹️ Have fun crafting tiny-big adventures!"
+    @echo ""
+    @echo "💖 Huge thanks to Lexaloffle (www.lexaloffle.com) for creating the wonderfully tiny-big PICO-8!"
+
+_help-run:
+    @printf '%s\n' \
+        "🕹️ Recipe: run" \
+        "" \
+        "Launch PICO-8 with an optional cart filename and/or PICO-8 command-line switches. When a cart name is supplied, the current directory is searched for .p8/.p8.png/.p8.rom files." \
+        "" \
+        "Usage:" \
+        "  just run                     # Launch PICO-8 without loading a cart" \
+        "  just run CART_NAME           # Load CART_NAME from the current directory" \
+        "  just run CART_NAME -volume 8 # Pass switches after the cart name" \
+        "  just run -splore             # Launch PICO-8 directly into Splore" \
+        "" \
+        "Helpful hints:" \
+        "  • Cart lookup is case-sensitive and respects relative paths." \
+        "  • Need the full switch list? Run: just help pico-8" \
+        "  • To create a cart before running it, try: just make my-cart"
+
+_help-make:
+    @printf '%s\n' \
+        "🕹️ Recipe: make" \
+        "" \
+        "Create new carts in the current directory. You can generate an empty .p8 file or copy one of the available templates." \
+        "" \
+        "Usage:" \
+        "  just make NAME               # Create NAME.p8 (added automatically when missing)" \
+        "  just make NAME TEMPLATE      # Copy templates/TEMPLATE into NAME (file or directory)" \
+        "  just make                    # Show help and usage examples" \
+        "" \
+        "Helpful hints:" \
+        "  • Use 'just templates' to see available template names." \
+        "  • Directory templates drop the trailing .p8 automatically." \
+        "  • Need a quick recap? Run: just help make"
+
+_help-carts:
+    @printf '%s\n' \
+        "🕹️ Recipe: carts" \
+        "" \
+        "List carts stored in workspace/carts/mycarts (your projects) and workspace/carts/other (downloads or shared carts)." \
+        "" \
+        "Usage:" \
+        "  just carts" \
+        "" \
+        "Helpful hints:" \
+        "  • Place personal work in workspace/carts/mycarts." \
+        "  • Community carts belong in workspace/carts/other so they stay organised." \
+        "  • Pair with 'just run' from inside a cart directory for quick launches."
+
+_help-templates:
+    @printf '%s\n' \
+        "🕹️ Recipe: templates" \
+        "" \
+        "Show all available cart templates located in templates/." \
+        "" \
+        "Usage:" \
+        "  just templates" \
+        "" \
+        "Helpful hints:" \
+        "  • Add your own starter templates to templates/ (files or directories)." \
+        "  • Pair with 'just make NAME TEMPLATE' to scaffold new projects quickly."
+
+_help-init:
+    @printf '%s\n' \
+        "🕹️ Recipe: init" \
+        "" \
+        "Prepare the development environment. Creates workspace folders, verifies the PICO-8 runtime, ensures the launch script is executable, and seeds workspace/config.txt from backups/config.base.txt." \
+        "" \
+        "Usage:" \
+        "  just init                    # Perform setup and keep existing configs intact" \
+        "  just init alsoconfig         # Regenerate config.txt (prompts before overwriting)" \
+        "" \
+        "Helpful hints:" \
+        "  • If PICO-8.app is missing, place it under pico8-runtime/ or provide a path when prompted." \
+        "  • A personalised copy lives at backups/config.local.txt for reference." \
+        "  • Need to refresh paths later? Re-run: just init alsoconfig"
+
+_help-pico:
+    @printf '%s\n' \
+        "🕹️ PICO-8 Command-Line Reference" \
+        "" \
+        "Common switches:" \
+        "  -run <cart.p8>        # Launch and run a specific cart" \
+        "  -splore              # Open Splore browser" \
+        "  -volume <0-128>      # Set master volume (0–128)" \
+        "  -workspace <path>    # Override workspace path" \
+        "  -home <path>         # Override desktop/save path" \
+        "  -pixel_perfect       # Disable pixel smoothing" \
+        "  -windowed / -fullscreen / -frameless" \
+        "  -width <px> -height <px>" \
+        "" \
+        "Documentation:" \
+        "  • Offline manual: pico8-runtime/pico-8_manual.txt" \
+        "  • Online manual: https://www.lexaloffle.com/dl/docs/pico-8_manual.html" \
+        "  • For launch tips, run: just help run"
+
+_help-unknown topic:
+    @printf '%s\n' \
+        "🔍 Help topic not recognised." \
+        "" \
+        "Try one of:" \
+        "  just help overview" \
+        "  just help run" \
+        "  just help make" \
+        "  just help carts" \
+        "  just help templates" \
+        "  just help init" \
+        "  just help pico-8"
 
 # Launch PICO-8 with optional cart and/or command line parameters
 # Usage patterns:
@@ -40,7 +184,8 @@ run *args="":
 
 # Launch PICO-8 without arguments
 _run-plain:
-    @echo "🎮 Launching PICO-8..."
+    @echo "🕹️ Launching PICO-8..."
+    @echo ""
     @cd "{{ justfile_dir }}" && ./pico8
 
 # Launch PICO-8 with arguments (cart name or parameters)
@@ -68,7 +213,8 @@ _run-with-args args:
                 shift args_array
                 remaining_args="${args_array[*]:-}"
                 
-                echo "🎮 Running: $(basename "$cart_path") $remaining_args"
+                echo "🕹️ Running: $(basename "$cart_path") $remaining_args"
+                echo ""
                 echo "📁 From: $invoke_dir"
                 
                 # Launch PICO-8 from justfile directory with cart path
@@ -78,13 +224,15 @@ _run-with-args args:
         done
         
         # Cart not found - provide helpful error message
-        echo "❌ Cart not found: $first_arg"
+        echo "🔍 Cart not found: $first_arg"
         echo ""
         echo "📁 Searched in: $invoke_dir"
         echo ""
         echo "💡 To create a new cart, use: just make $first_arg"
         echo ""
         echo "🕹️ To start PICO-8 without a cart, use: just run"
+        echo ""
+        echo "ℹ️ Need guidance? Run: just help run"
         exit 0
     else
         # Not a cart name - pass to parameter handler
@@ -94,7 +242,8 @@ _run-with-args args:
 
 # Run PICO-8 with command line parameters
 _run-with-params args:
-    @echo "🎮 Launching PICO-8 with parameters: {{ args }}"
+    @echo "🕹️ Launching PICO-8 with parameters: {{ args }}"
+    @echo ""
     @cd "{{ justfile_dir }}" && ./pico8 {{ args }}
 
 # Create PICO-8 cart with optional [name] and [template]
@@ -104,17 +253,7 @@ make name="" template="":
 
 # Show make help
 _make-help:
-    @echo "🎮 Create PICO-8 cart in current directory"
-    @echo ""
-    @echo "Usage:"
-    @echo "  just make NAME         Create NAME.p8 (empty cart)"
-    @echo "  just make NAME TMPL    Copy template to current directory"
-    @echo ""
-    @echo "Examples:"
-    @echo "  just make my-game         Creates my-game.p8"
-    @echo "  just make shooter basic   Copy basic template to ./shooter"
-    @echo ""
-    @echo "Note: .p8 extension is automatically added for single-file carts"
+    @just _help-make
 
 # Create empty cart with smart .p8 extension handling
 [no-cd]
@@ -139,9 +278,9 @@ _normalize-and-create-empty name:
         cart_name="{{ name }}.p8"
     fi
     
-    echo "🎮 Creating empty cart: $cart_name"
+    echo "🕹️ Creating empty cart: $cart_name"
     touch "$cart_name"
-    echo "✅ Created: $cart_name"
+    echo "✨ Created: $cart_name"
 
 # Internal: Create cart from .p8 template file 
 [no-cd]
@@ -159,9 +298,9 @@ _create-from-file-template name template:
         output_name="{{ name }}.p8"
     fi
     
-    echo "🎮 Creating '$output_name' from template '{{ template }}.p8'"
+    echo "🕹️ Creating '$output_name' from template '{{ template }}.p8'"
     cp "$template_file" "$output_name"
-    echo "✅ Created: $output_name"
+    echo "✨ Created: $output_name"
 
 # Internal: Create cart from directory template
 [no-cd] 
@@ -179,19 +318,22 @@ _create-from-dir-template name template:
         output_name="${output_name%.p8}"
     fi
     
-    echo "🎮 Creating '$output_name/' from template directory '{{ template }}/'"
+    echo "🕹️ Creating '$output_name/' from template directory '{{ template }}/'"
     cp -r "$template_dir" "$output_name"
-    echo "✅ Created: $output_name/"
+    echo "✨ Created: $output_name/"
 
 # Internal: Handle template not found error
 _template-not-found template:
-    @echo "❌ Template not found: {{ template }}"
+    @echo "🔍 Template not found: {{ template }}"
+    @echo ""
     @echo "💡 Available templates:"
     @just templates
+    @echo ""
+    @echo "ℹ️ Need guidance? Run: just help templates"
 
 # List all carts in mycarts/ and other/
 carts:
-    @echo "🎮 Your Development Carts ({{ mycarts_dir }}):"
+    @echo "🕹️ Your Development Carts ({{ mycarts_dir }}):"
     @just _list-items "{{ mycarts_dir }}" "*.p8*" "carts" "just make <name>"
     @echo ""
     @echo "📚 Other Carts ({{ other_dir }}):"
@@ -252,9 +394,13 @@ init mode="":
     @just _check-runtime
     @just _check-script
     @just _init-config "{{ mode }}"
+    @echo ""
+    @echo "✨ Setup complete! Environment refreshed."
+    @echo ""
     @just _init-summary
     @echo ""
-    @echo "✅ Initialization complete!"
+    @echo "🕹️ Have fun making games!"
+    @echo "💖 Huge thanks to Lexaloffle (www.lexaloffle.com) for dreaming up PICO-8."
 
 # Create directory structure
 _init-dirs:
@@ -271,7 +417,8 @@ _init-dirs:
     @mkdir -p "{{ justfile_dir }}/backups"
     @mkdir -p "{{ workspace_dir }}/screenshots"
     @echo ""
-    @echo "✅ Directories created"
+    @echo "✨ Directories created"
+    @echo ""
 
 # Check PICO-8 runtime
 _check-runtime:
@@ -356,7 +503,8 @@ _check-runtime:
         found_app=$(find "$repo_root" -path "$runtime_dir" -prune -o -name 'PICO-8.app' -type d -print -quit)
         if [[ -n "$found_app" ]]; then
             if install_from_source "$found_app"; then
-                echo "✅ PICO-8 runtime installed from '$found_app'"
+                echo "✨ PICO-8 runtime installed from '$found_app'"
+                echo ""
                 return 0
             fi
         fi
@@ -365,7 +513,8 @@ _check-runtime:
         while IFS= read -r candidate; do
             if unzip -qq -l "$candidate" >/dev/null 2>&1 && unzip -l "$candidate" | grep -q 'PICO-8.app/'; then
                 if install_from_source "$candidate"; then
-                    echo "✅ PICO-8 runtime installed from archive '$candidate'"
+                    echo "✨ PICO-8 runtime installed from archive '$candidate'"
+                    echo ""
                     return 0
                 fi
             fi
@@ -375,28 +524,31 @@ _check-runtime:
     }
 
     if [[ -d "$target" ]]; then
-        echo "✅ PICO-8 runtime found"
+        echo "✨ PICO-8 runtime found"
+        echo ""
         exit 0
     fi
 
-    echo "❌ PICO-8 runtime not found in $runtime_dir"
+    echo "🔍 PICO-8 runtime not found in $runtime_dir"
 
     if attempt_auto_install; then
-        echo "✅ PICO-8 runtime ready at $target"
+        echo "✨ PICO-8 runtime ready at $target"
+        echo ""
         exit 0
     fi
 
-    echo "⚠️ Unable to locate PICO-8 assets in the repository."
+    echo "🛠️ Action needed: PICO-8.app was not bundled with this checkout."
     echo ""
-    echo "ℹ️ Provide a path to a PICO-8.app bundle, a directory that contains it, or a zip archive."
-    echo "   Press ENTER to continue without bundling PICO-8."
+    echo "   Provide a path to a PICO-8.app bundle, a directory that contains it, or a zip archive."
+    echo "   Press ENTER to continue without bundling PICO-8 (you can configure it later)."
+    echo ""
 
     while true; do
-        printf "Path to PICO-8 (or blank to skip): "
+        printf "👉 Path to PICO-8 (press ENTER to skip): "
         IFS= read -r user_input || user_input=""
 
         if [[ -z "$user_input" ]]; then
-            echo "⚠️ Continuing without the PICO-8 runtime."
+            echo "ℹ️ Continuing without bundling PICO-8 for now."
             break
         fi
 
@@ -407,23 +559,26 @@ _check-runtime:
         esac
 
         if [[ ! -e "$user_input" ]]; then
-            echo "❌ Path not found: $user_input"
+            echo "🧭 Path not found: $user_input"
             continue
         fi
 
         if install_from_source "$user_input"; then
-            echo "✅ PICO-8 runtime installed from user-provided path."
+            echo "✨ PICO-8 runtime installed from user-provided path."
+            echo ""
             break
         else
-            echo "❌ '$user_input' does not contain a PICO-8.app bundle."
+            echo "🔍 '$user_input' does not contain a PICO-8.app bundle."
         fi
     done
 
     if [[ -d "$target" ]]; then
-        echo "✅ PICO-8 runtime ready at $target"
+        echo "✨ PICO-8 runtime ready at $target"
+        echo ""
     else
         echo "⚠️ PICO-8 runtime still missing. Install manually to enable run commands."
         echo "Download PICO-8 fantasy console from https://www.lexaloffle.com/"
+        echo "ℹ️ For setup guidance, run: just help init"
     fi
 
 # Configure workspace config.txt from template
@@ -455,6 +610,7 @@ _init-config mode="":
     mkdir -p "${backup_config:h}"
     cp "$tmp" "$backup_config"
     echo "💾 Config backup updated at $backup_config"
+    echo ""
 
     should_copy="false"
     if [[ -f "$workspace_config" ]]; then
@@ -466,9 +622,11 @@ _init-config mode="":
                 should_copy="true"
             else
                 echo "ℹ️ Skipping workspace config restore."
+                echo ""
             fi
         else
             echo "ℹ️ Existing workspace config detected; leaving as-is."
+            echo ""
         fi
     else
         should_copy="true"
@@ -476,7 +634,8 @@ _init-config mode="":
 
     if [[ "$should_copy" == "true" ]]; then
         cp "$tmp" "$workspace_config"
-        echo "✅ Workspace config ready at $workspace_config"
+        echo "✨ Workspace config ready at $workspace_config"
+        echo ""
     fi
 
     rm -f "$tmp"
@@ -486,20 +645,23 @@ _check-script:
     #!/usr/bin/env zsh
     script_path="{{ justfile_dir }}/pico8"
     if [[ -x "$script_path" ]]; then
-        echo "✅ Launch script ready"
+        echo "✨ Launch script ready"
+        echo ""
     else
         echo "⚠️ Launch script not executable - fixing..."
         if chmod +x "$script_path" 2>/dev/null; then
-            echo "✅ Fixed launch script permissions"
+            echo "✨ Fixed launch script permissions"
+            echo ""
         else
-            echo "❌ Could not fix permissions - run: chmod +x $script_path"
+            echo "⚠️ Could not fix permissions - run: chmod +x $script_path"
+            echo ""
         fi
     fi
 
 # Show environment summary
 _init-summary:
     @echo ""
-    @echo "📋 Environment Structure:"
+    @echo "📦 Environment Structure:"
     @echo "  {{ justfile_dir }}"
     @echo "  ├── pico8                  Launch script"
     @echo "  ├── templates/             Templates for new carts"
@@ -513,14 +675,19 @@ _init-summary:
     @echo "      ├── bbs/               Downloaded BBS carts"
     @echo "      └── config.txt         PICO-8 configuration"
     @echo ""
-    @echo "🎮 Usage Examples:"
-    @echo "  just run                   Launch PICO-8"
-    @echo "  just run my-game           Launch with cart from current directory"
-    @echo "  just run my-game -volume 64 Launch cart with PICO-8 switches"
-    @echo "  just run -splore           Launch PICO-8 in Splore mode"
-    @echo "  just make my-game          Create empty my-game.p8"
-    @echo "  just make shooter basic    Create from template"
-    @echo "  just carts                 See all your carts"
+    @echo "📜 Available Recipes (see 'just help <name>' for more):"
+    @echo "  just run         Launch PICO-8 with optional [cart filename] and/or [PICO-8 switches]"
+    @echo "    just run                     # Launch without loading a cart"
+    @echo "    just run CART_NAME           # Load CART_NAME from the current directory"
+    @echo "    just run -splore             # Open PICO-8's Splore browser"
+    @echo "  just make        Create new carts in the current directory"
+    @echo "    just make NAME               # Create NAME.p8 (extension added automatically)"
+    @echo "    just make NAME TEMPLATE      # Copy templates/TEMPLATE into NAME"
+    @echo "  just carts       List carts in workspace/carts/"
+    @echo "  just templates   Show template starters living in templates/"
+    @echo "  just init        Prepare the environment and manage config.txt"
+    @echo "    just init alsoconfig         # Regenerate workspace/config.txt (with confirmation)"
+    @echo "  just help pico-8 Explore PICO-8 command-line switches and docs"
     @echo ""
     @echo "🎯 Development Workflow:"
     @echo "  1. Navigate to carts/mycarts/ for your development projects"
