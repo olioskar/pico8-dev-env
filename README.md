@@ -50,7 +50,7 @@ pico-8/                           # Development environment root
    ```bash
    just init
    ```
-   `just init` always configures the repository root (even if you invoke it from a subfolder). If no runtime is detected it will search for one, prompt you to supply a path to a `PICO-8.app` bundle or ZIP archive, copy over the manual/license when found, or let you continue without bundling PICO-8.
+   `just init` always configures the repository root (even if you invoke it from a subfolder). If no runtime is detected it will search for one, prompt you to supply a path to a `PICO-8.app` bundle or ZIP archive, copy over the manual/license when found, or let you continue without bundling PICO-8. If `workspace/config.txt` is missing, `just init` seeds it from `backups/config.base.txt`, rewrites `desktop_path`, `root_path`, and `cdata_path` for your machine, and stores the personalized copy at `backups/config.local.txt` for safekeeping.
 
 That's it! 🎉
 
@@ -94,7 +94,8 @@ just run -splore                 # Launch PICO-8 in Splore mode
 ### **System**
 
 ```bash
-just init                        # Initialize/verify setup, auto-detect or prompt for PICO-8 runtime
+just init                        # Initialize/verify setup, auto-detect runtime, seed config if absent
+just init alsoconfig             # Regenerate config and overwrite workspace copy (with confirmation)
 just                             # Show available commands + environment info
 ```
 

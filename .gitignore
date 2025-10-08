@@ -61,3 +61,4 @@ pico8-runtime/*
 WARP.md
 STATUS.md
 AGENTS.md
+backups/config.local.txt

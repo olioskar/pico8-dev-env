@@ -246,7 +246,12 @@ _list-items dir pattern item_type create_hint:
     fi
 
 # Initialize environment for first-time setup
-init: _init-dirs _check-runtime _check-script _init-summary
+init mode="":
+    @just _init-dirs
+    @just _check-runtime
+    @just _check-script
+    @just _init-config "{{ mode }}"
+    @just _init-summary
     @echo ""
     @echo "✅ Initialization complete!"
 
@@ -416,6 +421,61 @@ _check-runtime:
     else
         echo "⚠️ PICO-8 runtime still missing. Install manually to enable run commands."
     fi
+
+# Configure workspace config.txt from template
+_init-config mode="":
+    #!/usr/bin/env zsh
+    set -euo pipefail
+
+    mode="{{ mode }}"
+    mode="${mode:l}"
+
+    base_config="{{ justfile_dir }}/backups/config.base.txt"
+    workspace_config="{{ workspace_dir }}/config.txt"
+    backup_config="{{ justfile_dir }}/backups/config.local.txt"
+    workspace_raw="{{ workspace_dir }}"
+    workspace_dir_trimmed="${workspace_raw%/}"
+    desktop_path="${workspace_dir_trimmed}/"
+    root_path="${workspace_dir_trimmed}/carts/"
+    cdata_path="${workspace_dir_trimmed}/cdata/"
+
+    if [[ ! -f "$base_config" ]]; then
+        echo "⚠️ Base config not found at $base_config"
+        return 0
+    fi
+
+    tmp="$(mktemp)"
+
+    python3 -c "import sys, pathlib; base=pathlib.Path(sys.argv[1]); tmp=pathlib.Path(sys.argv[2]); desktop, root, cdata = sys.argv[3:6]; tmp.write_text('\n'.join((f'desktop_path {desktop}' if line.startswith('desktop_path ') else f'root_path {root}' if line.startswith('root_path ') else f'cdata_path {cdata}' if line.startswith('cdata_path ') else line) for line in base.read_text().splitlines()) + '\n')" "$base_config" "$tmp" "$desktop_path" "$root_path" "$cdata_path"
+
+    mkdir -p "${backup_config:h}"
+    cp "$tmp" "$backup_config"
+    echo "💾 Config backup updated at $backup_config"
+
+    should_copy="false"
+    if [[ -f "$workspace_config" ]]; then
+        if [[ "$mode" == "alsoconfig" ]]; then
+            echo "⚠️ About to overwrite existing config at $workspace_config with generated values."
+            printf "Proceed? [y/N]: "
+            read -r reply
+            if [[ "$reply" == "y" || "$reply" == "Y" ]]; then
+                should_copy="true"
+            else
+                echo "ℹ️ Skipping workspace config restore."
+            fi
+        else
+            echo "ℹ️ Existing workspace config detected; leaving as-is."
+        fi
+    else
+        should_copy="true"
+    fi
+
+    if [[ "$should_copy" == "true" ]]; then
+        cp "$tmp" "$workspace_config"
+        echo "✅ Workspace config ready at $workspace_config"
+    fi
+
+    rm -f "$tmp"
 
 # Check and fix launch script permissions
 _check-script:
