@@ -31,8 +31,8 @@ default:
 #   just run CART_NAME          # Load specific cart from current directory
 #   just run CART_NAME -switches # Load cart with PICO-8 switches (cart name MUST be first)
 #   just run -switches          # Launch PICO-8 with switches only (no cart)
-
 # Note: When using both cart name and switches, cart name must come first!
+
 [doc('Launch PICO-8 with optional [filename] and/or [PICO-8 switches]')]
 [no-cd]
 run *args="":
@@ -45,22 +45,18 @@ _run-plain:
 
 # Launch PICO-8 with arguments (cart name or parameters)
 _run-with-args args:
-    @just _find-and-run-cart "{{ invocation_directory() }}" "{{ args }}" || just _run-with-params "{{ args }}"
-
-# Try to find and run a cart by name
-_find-and-run-cart invoke_dir args:
     #!/usr/bin/env zsh
     set -euo pipefail
-    
+
+    invoke_dir="{{ invocation_directory() }}"
+    raw_args="{{ args }}"
+
     # Parse arguments using just's built-in functionality
     args_array=({{ args }})
     first_arg="${args_array[1]:-}"
     
     # Check if first arg looks like a cart name (no dashes/slashes/numbers only)
     if [[ "$first_arg" != -* && "$first_arg" != */* && ! "$first_arg" =~ ^[0-9]+$ ]]; then
-        # Use the invoke directory passed as parameter
-        invoke_dir="{{ invoke_dir }}"
-        
         # List of extensions to try, in order of preference
         extensions=("" ".p8" ".p8.png" ".p8.rom")
         
@@ -83,12 +79,16 @@ _find-and-run-cart invoke_dir args:
         
         # Cart not found - provide helpful error message
         echo "❌ Cart not found: $first_arg"
+        echo ""
         echo "📁 Searched in: $invoke_dir"
+        echo ""
         echo "💡 To create a new cart, use: just make $first_arg"
-        exit 1
+        echo "💡 To start PICO-8 without a cart, use: just run"
+        exit 0
     else
         # Not a cart name - pass to parameter handler
-        exit 1
+        just _run-with-params "$raw_args"
+        exit $?
     fi
 
 # Run PICO-8 with command line parameters
@@ -261,7 +261,7 @@ _init-dirs:
     @echo ""
     @echo "📂 Repository root: {{ justfile_dir }}"
     @echo "📍 Invocation directory: {{ invocation_directory() }}"
-    @if [[ "{{ invocation_directory() }}" != "{{ justfile_dir }}" ]]; then echo "ℹ️ init always operates on the repository root above."; fi
+    @if [[ "{{ invocation_directory() }}" != "{{ justfile_dir }}" ]]; then echo "ℹ️ init always operates on the repository root."; fi
     @echo ""
     @echo "📁 Creating directories..."
     @mkdir -p "{{ mycarts_dir }}"
@@ -269,6 +269,7 @@ _init-dirs:
     @mkdir -p "{{ templates_dir }}"
     @mkdir -p "{{ justfile_dir }}/backups"
     @mkdir -p "{{ workspace_dir }}/screenshots"
+    @echo ""
     @echo "✅ Directories created"
 
 # Check PICO-8 runtime
@@ -385,6 +386,7 @@ _check-runtime:
     fi
 
     echo "⚠️ Unable to locate PICO-8 assets in the repository."
+    echo ""
     echo "ℹ️ Provide a path to a PICO-8.app bundle, a directory that contains it, or a zip archive."
     echo "   Press ENTER to continue without bundling PICO-8."
 
@@ -420,6 +422,7 @@ _check-runtime:
         echo "✅ PICO-8 runtime ready at $target"
     else
         echo "⚠️ PICO-8 runtime still missing. Install manually to enable run commands."
+        echo "Download PICO-8 fantasy console from https://www.lexaloffle.com/"
     fi
 
 # Configure workspace config.txt from template
@@ -521,7 +524,7 @@ _init-summary:
     @echo "🎯 Development Workflow:"
     @echo "  1. Navigate to carts/mycarts/ for your development projects"
     @echo "  2. Use 'just make' to create carts in current directory"
-    @echo "  3. Edit carts in external editor (Warp, VS Code, etc.)"
+    @echo "  3. Edit carts in external editor"
     @echo "  4. Use 'just run' to test in PICO-8"
     @echo "  5. Press CTRL-R in PICO-8 when you see 'EXTERNAL CHANGES'"
     @echo "  6. Add downloaded carts to carts/other/ for exploration"
