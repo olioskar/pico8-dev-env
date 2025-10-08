@@ -254,6 +254,10 @@ init: _init-dirs _check-runtime _check-script _init-summary
 _init-dirs:
     @echo "🚀 Initializing PICO-8 Development Environment..."
     @echo ""
+    @echo "📂 Repository root: {{ justfile_dir }}"
+    @echo "📍 Invocation directory: {{ invocation_directory() }}"
+    @if [[ "{{ invocation_directory() }}" != "{{ justfile_dir }}" ]]; then echo "ℹ️ init always operates on the repository root above."; fi
+    @echo ""
     @echo "📁 Creating directories..."
     @mkdir -p "{{ mycarts_dir }}"
     @mkdir -p "{{ other_dir }}"
@@ -265,14 +269,152 @@ _init-dirs:
 # Check PICO-8 runtime
 _check-runtime:
     #!/usr/bin/env zsh
-    if [[ -d "{{ runtime_dir }}/PICO-8.app" ]]; then
+    set -euo pipefail
+
+    runtime_dir="{{ runtime_dir }}"
+    repo_root="{{ justfile_dir }}"
+    target="$runtime_dir/PICO-8.app"
+
+    copy_bundle() {
+        local source="$1"
+        local dest="$target"
+        local parent
+        rm -rf "$dest"
+        mkdir -p "$runtime_dir"
+        if command -v ditto >/dev/null 2>&1; then
+            ditto "$source" "$dest"
+        else
+            cp -R "$source" "$dest"
+        fi
+        parent="$(dirname "$dest")"
+        for extra in "license.txt" "pico-8_manual.txt"; do
+            if [[ -f "$source/../$extra" ]]; then
+                cp "$source/../$extra" "$parent/$extra"
+            elif [[ -f "$source/$extra" ]]; then
+                cp "$source/$extra" "$parent/$extra"
+            fi
+        done
+    }
+
+    install_from_source() {
+        local candidate="$1"
+
+        if [[ -d "$candidate" ]]; then
+            if [[ "$(basename "$candidate")" == "PICO-8.app" ]]; then
+                echo "📦 Installing PICO-8.app from '$candidate'"
+                copy_bundle "$candidate"
+                return 0
+            fi
+
+            local nested="$candidate/PICO-8.app"
+            if [[ -d "$nested" ]]; then
+                echo "📦 Installing PICO-8.app from '$nested'"
+                copy_bundle "$nested"
+                return 0
+            fi
+
+            nested=$(find "$candidate" -maxdepth 2 -name 'PICO-8.app' -type d | head -n 1)
+            if [[ -n "$nested" ]]; then
+                echo "📦 Installing PICO-8.app from '$nested'"
+                copy_bundle "$nested"
+                return 0
+            fi
+
+            return 1
+        fi
+
+        if [[ -f "$candidate" && "$candidate" == *.zip ]]; then
+            local tmp
+            tmp=$(mktemp -d)
+            if unzip -qq "$candidate" -d "$tmp" >/dev/null 2>&1; then
+                local extracted
+                extracted=$(find "$tmp" -maxdepth 3 -name 'PICO-8.app' -type d | head -n 1)
+                if [[ -n "$extracted" ]]; then
+                    echo "📦 Installing PICO-8.app from archive '$candidate'"
+                    copy_bundle "$extracted"
+                    rm -rf "$tmp"
+                    return 0
+                fi
+            fi
+            rm -rf "$tmp"
+            return 1
+        fi
+
+        return 1
+    }
+
+    attempt_auto_install() {
+        local found_app
+
+        found_app=$(find "$repo_root" -path "$runtime_dir" -prune -o -name 'PICO-8.app' -type d -print -quit)
+        if [[ -n "$found_app" ]]; then
+            if install_from_source "$found_app"; then
+                echo "✅ PICO-8 runtime installed from '$found_app'"
+                return 0
+            fi
+        fi
+
+        local candidate
+        while IFS= read -r candidate; do
+            if unzip -qq -l "$candidate" >/dev/null 2>&1 && unzip -l "$candidate" | grep -q 'PICO-8.app/'; then
+                if install_from_source "$candidate"; then
+                    echo "✅ PICO-8 runtime installed from archive '$candidate'"
+                    return 0
+                fi
+            fi
+        done < <(find "$repo_root" -path "$runtime_dir" -prune -o -name '*.zip' -type f -print)
+
+        return 1
+    }
+
+    if [[ -d "$target" ]]; then
         echo "✅ PICO-8 runtime found"
+        exit 0
+    fi
+
+    echo "❌ PICO-8 runtime not found in $runtime_dir"
+
+    if attempt_auto_install; then
+        echo "✅ PICO-8 runtime ready at $target"
+        exit 0
+    fi
+
+    echo "⚠️ Unable to locate PICO-8 assets in the repository."
+    echo "ℹ️ Provide a path to a PICO-8.app bundle, a directory that contains it, or a zip archive."
+    echo "   Press ENTER to continue without bundling PICO-8."
+
+    while true; do
+        printf "Path to PICO-8 (or blank to skip): "
+        IFS= read -r user_input || user_input=""
+
+        if [[ -z "$user_input" ]]; then
+            echo "⚠️ Continuing without the PICO-8 runtime."
+            break
+        fi
+
+        case "$user_input" in
+            "~"*)
+                user_input="${user_input/#\~/$HOME}"
+                ;;
+        esac
+
+        if [[ ! -e "$user_input" ]]; then
+            echo "❌ Path not found: $user_input"
+            continue
+        fi
+
+        if install_from_source "$user_input"; then
+            echo "✅ PICO-8 runtime installed from user-provided path."
+            break
+        else
+            echo "❌ '$user_input' does not contain a PICO-8.app bundle."
+        fi
+    done
+
+    if [[ -d "$target" ]]; then
+        echo "✅ PICO-8 runtime ready at $target"
     else
-        echo "❌ PICO-8 runtime not found in {{ runtime_dir }}"
-        echo "💡 To add PICO-8 runtime:"
-        echo "   1. Download from: https://www.lexaloffle.com/pico-8.php"
-        echo "   2. Copy PICO-8.app to {{ runtime_dir }}"
-        echo "   3. Run 'just init' again to verify"
+        echo "⚠️ PICO-8 runtime still missing. Install manually to enable run commands."
     fi
 
 # Check and fix launch script permissions

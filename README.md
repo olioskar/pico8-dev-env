@@ -45,11 +45,12 @@ pico-8/                           # Development environment root
 ### Installation
 
 1. **Get PICO-8**: Download from [lexaloffle.com](https://www.lexaloffle.com)
-2. **Copy PICO-8.app** to `pico8-runtime/` directory
+2. **Copy PICO-8.app** to `pico8-runtime/` directory (or leave it anywhere handy for now)
 3. **Initialize environment**:
    ```bash
    just init
    ```
+   `just init` always configures the repository root (even if you invoke it from a subfolder). If no runtime is detected it will search for one, prompt you to supply a path to a `PICO-8.app` bundle or ZIP archive, copy over the manual/license when found, or let you continue without bundling PICO-8.
 
 That's it! 🎉
 
@@ -93,7 +94,7 @@ just run -splore                 # Launch PICO-8 in Splore mode
 ### **System**
 
 ```bash
-just init                        # Initialize/verify environment setup
+just init                        # Initialize/verify setup, auto-detect or prompt for PICO-8 runtime
 just                             # Show available commands + environment info
 ```
 
