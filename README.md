@@ -1,6 +1,6 @@
 # PICO-8 Development Environment
 
-Self-contained PICO-8 lite development environment.
+Just a little self-contained PICO-8 lite dev environment.
 
 ## 🎯 What This Is
 
