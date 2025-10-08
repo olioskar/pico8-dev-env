@@ -83,7 +83,8 @@ _run-with-args args:
         echo "📁 Searched in: $invoke_dir"
         echo ""
         echo "💡 To create a new cart, use: just make $first_arg"
-        echo "💡 To start PICO-8 without a cart, use: just run"
+        echo ""
+        echo "🕹️ To start PICO-8 without a cart, use: just run"
         exit 0
     else
         # Not a cart name - pass to parameter handler
