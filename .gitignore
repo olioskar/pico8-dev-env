@@ -59,6 +59,5 @@ pico8-runtime/*
 
 # Warp AI Configuration
 WARP.md
-STATUS.md
 AGENTS.md
 backups/config.local.txt

@@ -71,35 +71,25 @@ just make hello-pico-8 coolgame
 just run hello-pico-8
 ```
 
-## 📋 Commands Reference
+## 🕹️ Key Recipes
 
-### **Cart Management**
+Use `just help <name>` for detailed guidance and examples.
 
-```bash
-just carts                        # List all carts (mycarts + other)
-just make NAME                    # Create empty cart in current directory  
-just make NAME TEMPLATE           # Create cart from template
-just templates                   # List available templates
-```
+- `just run` — Launch PICO-8 with optional **[cart filename]** and/or **[PICO-8 switches]**
+  - `just run` — Launch without loading a cart
+  - `just run CART_NAME` — Load `CART_NAME` from the current directory
+  - `just run -splore` — Jump straight into Splore
+- `just make` — Create new carts in the current directory
+  - `just make NAME` — Create `NAME.p8` (extension added automatically)
+  - `just make NAME TEMPLATE` — Copy `templates/TEMPLATE` into `NAME`
+- `just carts` — List carts in `workspace/carts/mycarts` and `workspace/carts/other`
+- `just templates` — Show available cart starters in `templates/`
+- `just init` — Prepare the environment and manage `workspace/config.txt`
+  - `just init alsoconfig` — Regenerate config paths (prompts before overwriting)
+- `just help pico-8` — Display common PICO-8 command-line switches and manual links
+- `just help` — Print the overview shown by `just` (with thanks to Lexaloffle!)
 
-### **Running PICO-8**
-
-```bash
-just run                         # Launch PICO-8 normally
-just run CART_NAME               # Load specific cart from current directory  
-just run CART_NAME -volume 64    # Load cart with PICO-8 switches
-just run -splore                 # Launch PICO-8 in Splore mode
-```
-
-### **System**
-
-```bash
-just init                        # Initialize/verify setup, auto-detect runtime, seed config if absent
-just init alsoconfig             # Regenerate config and overwrite workspace copy (with confirmation)
-just                             # Show available commands + environment info
-```
-
-## 🎮 Development Workflow
+## 🕹️ Development Workflow
 
 ### **Your Main Development Space**
 
@@ -281,13 +271,15 @@ This environment can be customized:
 
 ## 📚 Resources
 
-- **PICO-8 Manual**: `pico8-runtime/pico-8_manual.txt
+- **PICO-8 Manual**: `pico8-runtime/pico-8_manual.txt`
 - **PICO-8 Website**: [lexaloffle.com/pico-8.php](https://www.lexaloffle.com/pico-8.php)
 - **Just Documentation**: [just.systems](https://just.systems)
 - **Community**: [PICO-8 BBS](https://bbs.lexaloffle.com)
 
 ---
 
-**Happy game development!** 🎮✨
+💖 Huge thanks to [Lexaloffle](https://www.lexaloffle.com) for creating the wonderfully tiny-big PICO-8.
+
+**Happy game development!** 🕹️✨
 
 This environment provides everything you need for professional PICO-8 development while maintaining the fantasy console's charm and simplicity.
