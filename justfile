@@ -40,134 +40,181 @@ help topic="overview":
     esac
 
 _help-overview:
-    @echo "🕹️ PICO-8 Development Environment"
-    @echo ""
-    @echo "📍 You are here: {{ invocation_directory() }}"
-    @echo "🏠 Workspace root: {{ workspace_dir }}"
-    @echo ""
-    @echo "📜 Recipes (try 'just help <name>' for details):"
-    @echo "  just run         Launch PICO-8 with optional [cart filename] and/or [PICO-8 switches]"
-    @echo "  just make        Create carts in the current directory (empty or from templates)"
-    @echo "  just carts       Browse carts in workspace/carts/mycarts and workspace/carts/other"
-    @echo "  just templates   List starter templates stored in templates/"
-    @echo "  just init        Prepare the environment and manage the local PICO-8 config"
-    @echo "  just help pico-8 Show common PICO-8 command-line switches and docs links"
-    @echo ""
-    @echo "📚 Quick Example:"
-    @echo "  just run -splore       # Open PICO-8's Splore browser"
-    @echo ""
-    @echo "🧭 Tip: Use 'just help run' (or make/carts/templates/init) for detailed guidance."
-    @echo ""
-    @echo "🕹️ Have fun crafting tiny-big adventures!"
-    @echo ""
-    @echo "💖 Huge thanks to Lexaloffle (www.lexaloffle.com) for creating the wonderfully tiny-big PICO-8!"
+    #!/usr/bin/env zsh
+    set -euo pipefail
+
+    cyan=$'\033[1;36m'
+    yellow=$'\033[1;33m'
+    reset=$'\033[0m'
+
+    printf '%s\n\n' "${cyan}🕹️ PICO-8 Development Environment${reset}"
+    printf '📍 You are here: %s\n' "{{ invocation_directory() }}"
+    printf '🏠 Workspace root: %s\n' "{{ workspace_dir }}"
+    printf '\n'
+    printf '%s\n' "${yellow}📜 Recipes (try 'just help <name>' for details):${reset}"
+    printf '  %s\n' 'just run         Launch PICO-8 with optional [cart filename] and/or [PICO-8 switches]'
+    printf '  %s\n' 'just make        Create carts in the current directory (empty or from templates)'
+    printf '  %s\n' 'just carts       Browse carts in workspace/carts/mycarts and workspace/carts/other'
+    printf '  %s\n' 'just templates   List starter templates stored in templates/'
+    printf '  %s\n' 'just init        Prepare the environment and manage the local PICO-8 config'
+    printf '  %s\n' 'just help pico-8 Show common PICO-8 command-line switches and docs links'
+    printf '\n'
+    printf '%s\n' "${yellow}📚 Quick Example:${reset}"
+    printf '  just run -splore       # Open PICO-8'\''s Splore browser\n'
+    printf '\n'
+    printf '%s\n' "${yellow}🧭 Tip:${reset} Use 'just help run' (or make/carts/templates/init) for detailed guidance."
+    printf '\n'
+    printf '🕹️ Have fun crafting tiny-big adventures!\n'
+    printf '\n'
+    printf '💖 Huge thanks to Lexaloffle (www.lexaloffle.com) for creating the wonderfully tiny-big PICO-8!\n'
 
 _help-run:
-    @printf '%s\n' \
-        "🕹️ Recipe: run" \
-        "" \
-        "Launch PICO-8 with an optional cart filename and/or PICO-8 command-line switches. When a cart name is supplied, the current directory is searched for .p8/.p8.png/.p8.rom files." \
-        "" \
-        "Usage:" \
-        "  just run                     # Launch PICO-8 without loading a cart" \
-        "  just run CART_NAME           # Load CART_NAME from the current directory" \
-        "  just run CART_NAME -volume 8 # Pass switches after the cart name" \
-        "  just run -splore             # Launch PICO-8 directly into Splore" \
-        "" \
-        "Helpful hints:" \
-        "  • Cart lookup is case-sensitive and respects relative paths." \
-        "  • Need the full switch list? Run: just help pico-8" \
-        "  • To create a cart before running it, try: just make my-cart"
+    #!/usr/bin/env zsh
+    set -euo pipefail
+
+    cyan=$'\033[1;36m'
+    yellow=$'\033[1;33m'
+    reset=$'\033[0m'
+
+    printf '%s\n' "${cyan}🕹️ Recipe: run${reset}"
+    printf '\n'
+    printf '%s\n' 'Launch PICO-8 with an optional cart filename and/or PICO-8 command-line switches. When a cart name is supplied, the current directory is searched for .p8/.p8.png/.p8.rom files.'
+    printf '\n'
+    printf '%s\n' "${yellow}Usage:${reset}"
+    printf '  just run                     # Launch PICO-8 without loading a cart\n'
+    printf '  just run CART_NAME           # Load CART_NAME from the current directory\n'
+    printf '  just run CART_NAME -volume 8 # Pass switches after the cart name\n'
+    printf '  just run -splore             # Launch PICO-8 directly into Splore\n'
+    printf '\n'
+    printf '%s\n' "${yellow}Helpful hints:${reset}"
+    printf '  • Cart lookup is case-sensitive and respects relative paths.\n'
+    printf '  • Need the full switch list? Run: just help pico-8\n'
+    printf '  • To create a cart before running it, try: just make my-cart\n'
 
 _help-make:
-    @printf '%s\n' \
-        "🕹️ Recipe: make" \
-        "" \
-        "Create new carts in the current directory. You can generate an empty .p8 file or copy one of the available templates." \
-        "" \
-        "Usage:" \
-        "  just make NAME               # Create NAME.p8 (added automatically when missing)" \
-        "  just make NAME TEMPLATE      # Copy templates/TEMPLATE into NAME (file or directory)" \
-        "  just make                    # Show help and usage examples" \
-        "" \
-        "Helpful hints:" \
-        "  • Use 'just templates' to see available template names." \
-        "  • Directory templates drop the trailing .p8 automatically." \
-        "  • Need a quick recap? Run: just help make"
+    #!/usr/bin/env zsh
+    set -euo pipefail
+
+    cyan=$'\033[1;36m'
+    yellow=$'\033[1;33m'
+    reset=$'\033[0m'
+
+    printf '%s\n' "${cyan}🕹️ Recipe: make${reset}"
+    printf '\n'
+    printf '%s\n' 'Create new carts in the current directory. You can generate an empty .p8 file or copy one of the available templates.'
+    printf '\n'
+    printf '%s\n' "${yellow}Usage:${reset}"
+    printf '  just make NAME               # Create NAME.p8 (added automatically when missing)\n'
+    printf '  just make NAME TEMPLATE      # Copy templates/TEMPLATE into NAME (file or directory)\n'
+    printf '  just make                    # Show help and usage examples\n'
+    printf '\n'
+    printf '%s\n' "${yellow}Helpful hints:${reset}"
+    printf '  • Use '\''just templates'\'' to see available template names.\n'
+    printf '  • Directory templates drop the trailing .p8 automatically.\n'
+    printf '  • Need a quick recap? Run: just help make\n'
 
 _help-carts:
-    @printf '%s\n' \
-        "🕹️ Recipe: carts" \
-        "" \
-        "List carts stored in workspace/carts/mycarts (your projects) and workspace/carts/other (downloads or shared carts)." \
-        "" \
-        "Usage:" \
-        "  just carts" \
-        "" \
-        "Helpful hints:" \
-        "  • Place personal work in workspace/carts/mycarts." \
-        "  • Community carts belong in workspace/carts/other so they stay organised." \
-        "  • Pair with 'just run' from inside a cart directory for quick launches."
+    #!/usr/bin/env zsh
+    set -euo pipefail
+
+    cyan=$'\033[1;36m'
+    yellow=$'\033[1;33m'
+    reset=$'\033[0m'
+
+    printf '%s\n' "${cyan}🕹️ Recipe: carts${reset}"
+    printf '\n'
+    printf '%s\n' 'List carts stored in workspace/carts/mycarts (your projects) and workspace/carts/other (downloads or shared carts).'
+    printf '\n'
+    printf '%s\n' "${yellow}Usage:${reset}"
+    printf '  just carts\n'
+    printf '\n'
+    printf '%s\n' "${yellow}Helpful hints:${reset}"
+    printf '  • Place personal work in workspace/carts/mycarts.\n'
+    printf '  • Community carts belong in workspace/carts/other so they stay organised.\n'
+    printf '  • Pair with '\''just run'\'' from inside a cart directory for quick launches.\n'
 
 _help-templates:
-    @printf '%s\n' \
-        "🕹️ Recipe: templates" \
-        "" \
-        "Show all available cart templates located in templates/." \
-        "" \
-        "Usage:" \
-        "  just templates" \
-        "" \
-        "Helpful hints:" \
-        "  • Add your own starter templates to templates/ (files or directories)." \
-        "  • Pair with 'just make NAME TEMPLATE' to scaffold new projects quickly."
+    #!/usr/bin/env zsh
+    set -euo pipefail
+
+    cyan=$'\033[1;36m'
+    yellow=$'\033[1;33m'
+    reset=$'\033[0m'
+
+    printf '%s\n' "${cyan}🕹️ Recipe: templates${reset}"
+    printf '\n'
+    printf '%s\n' 'Show all available cart templates located in templates/.'
+    printf '\n'
+    printf '%s\n' "${yellow}Usage:${reset}"
+    printf '  just templates\n'
+    printf '\n'
+    printf '%s\n' "${yellow}Helpful hints:${reset}"
+    printf '  • Add your own starter templates to templates/ (files or directories).\n'
+    printf '  • Pair with '\''just make NAME TEMPLATE'\'' to scaffold new projects quickly.\n'
 
 _help-init:
-    @printf '%s\n' \
-        "🕹️ Recipe: init" \
-        "" \
-        "Prepare the development environment. Creates workspace folders, verifies the PICO-8 runtime, ensures the launch script is executable, and seeds workspace/config.txt from backups/config.base.txt." \
-        "" \
-        "Usage:" \
-        "  just init                    # Perform setup and keep existing configs intact" \
-        "  just init alsoconfig         # Regenerate config.txt (prompts before overwriting)" \
-        "" \
-        "Helpful hints:" \
-        "  • If PICO-8.app is missing, place it under pico8-runtime/ or provide a path when prompted." \
-        "  • A personalised copy lives at backups/config.local.txt for reference." \
-        "  • Need to refresh paths later? Re-run: just init alsoconfig"
+    #!/usr/bin/env zsh
+    set -euo pipefail
+
+    cyan=$'\033[1;36m'
+    yellow=$'\033[1;33m'
+    reset=$'\033[0m'
+
+    printf '%s\n' "${cyan}🕹️ Recipe: init${reset}"
+    printf '\n'
+    printf '%s\n' 'Prepare the development environment. Creates workspace folders, verifies the PICO-8 runtime, ensures the launch script is executable, and seeds workspace/config.txt from backups/config.base.txt.'
+    printf '\n'
+    printf '%s\n' "${yellow}Usage:${reset}"
+    printf '  just init                    # Perform setup and keep existing configs intact\n'
+    printf '  just init alsoconfig         # Regenerate config.txt (prompts before overwriting)\n'
+    printf '\n'
+    printf '%s\n' "${yellow}Helpful hints:${reset}"
+    printf '  • If PICO-8.app is missing, place it under pico8-runtime/ or provide a path when prompted.\n'
+    printf '  • A personalised copy lives at backups/config.local.txt for reference.\n'
+    printf '  • Need to refresh paths later? Re-run: just init alsoconfig\n'
 
 _help-pico:
-    @printf '%s\n' \
-        "🕹️ PICO-8 Command-Line Reference" \
-        "" \
-        "Common switches:" \
-        "  -run <cart.p8>        # Launch and run a specific cart" \
-        "  -splore              # Open Splore browser" \
-        "  -volume <0-128>      # Set master volume (0–128)" \
-        "  -workspace <path>    # Override workspace path" \
-        "  -home <path>         # Override desktop/save path" \
-        "  -pixel_perfect       # Disable pixel smoothing" \
-        "  -windowed / -fullscreen / -frameless" \
-        "  -width <px> -height <px>" \
-        "" \
-        "Documentation:" \
-        "  • Offline manual: pico8-runtime/pico-8_manual.txt" \
-        "  • Online manual: https://www.lexaloffle.com/dl/docs/pico-8_manual.html" \
-        "  • For launch tips, run: just help run"
+    #!/usr/bin/env zsh
+    set -euo pipefail
+
+    cyan=$'\033[1;36m'
+    yellow=$'\033[1;33m'
+    reset=$'\033[0m'
+
+    printf '%s\n' "${cyan}🕹️ PICO-8 Command-Line Reference${reset}"
+    printf '\n'
+    printf '%s\n' "${yellow}Common switches:${reset}"
+    printf '  -run <cart.p8>        # Launch and run a specific cart\n'
+    printf '  -splore              # Open Splore browser\n'
+    printf '  -volume <0-128>      # Set master volume (0–128)\n'
+    printf '  -workspace <path>    # Override workspace path\n'
+    printf '  -home <path>         # Override desktop/save path\n'
+    printf '  -pixel_perfect       # Disable pixel smoothing\n'
+    printf '  -windowed / -fullscreen / -frameless\n'
+    printf '  -width <px> -height <px>\n'
+    printf '\n'
+    printf '%s\n' "${yellow}Documentation:${reset}"
+    printf '  • Offline manual: pico8-runtime/pico-8_manual.txt\n'
+    printf '  • Online manual: https://www.lexaloffle.com/dl/docs/pico-8_manual.html\n'
+    printf '  • For launch tips, run: just help run\n'
 
 _help-unknown topic:
-    @printf '%s\n' \
-        "🔍 Help topic not recognised." \
-        "" \
-        "Try one of:" \
-        "  just help overview" \
-        "  just help run" \
-        "  just help make" \
-        "  just help carts" \
-        "  just help templates" \
-        "  just help init" \
-        "  just help pico-8"
+    #!/usr/bin/env zsh
+    set -euo pipefail
+
+    yellow=$'\033[1;33m'
+    reset=$'\033[0m'
+
+    printf '%s\n' "🔍 Help topic not recognised."
+    printf '\n'
+    printf '%s\n' "${yellow}Try one of:${reset}"
+    printf '  just help overview\n'
+    printf '  just help run\n'
+    printf '  just help make\n'
+    printf '  just help carts\n'
+    printf '  just help templates\n'
+    printf '  just help init\n'
+    printf '  just help pico-8\n'
 
 # Launch PICO-8 with optional cart and/or command line parameters
 # Usage patterns:
