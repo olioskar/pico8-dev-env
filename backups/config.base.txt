@@ -47,7 +47,8 @@ sessions 60 // number of times program has been run
 // (scancode) hold this key down and left-click to simulate right-click
 rmb_key 0 // 0 for none  226 for LALT
 
-// Desktop for saving screenshots etc. Defaults to $HOME/Desktop
+// Desktop for saving screenshots etc. PIC8-8 Defaults to $HOME/Desktop
+// PICO-8 Workspace by @olioskar overwrites via commandline args in pico8 script
 desktop_path ./workspace/
 
 // 1 to allow controller input even when application is in background
@@ -84,10 +85,12 @@ volume 256
 
 
 // Location of pico-8's root folder
+// PICO-8 Workspace by @olioskar overwrites via commandline args in pico8 script
 root_path ./workspace/carts/
 
 
 // Location of cartridge save data
+// PICO-8 Workspace by @olioskar overwrites via commandline args in pico8 script
 cdata_path ./workspace/cdata/
 
 
