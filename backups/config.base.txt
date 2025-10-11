@@ -5,15 +5,19 @@
 // To generate the default config.txt, delete this file.
 // 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-// PICO-8 Workspace
-// Note! This config is the base PICO-8 config for 
-// PICO-8 Workspace by @olioskar. Used as a config template
+// PICO-8 Workspace by @olioskar.
+// Note! 
+// This config is the base PICO-8 config for initializing
+// the PICO-8 Workspace. Used as a config template
 // on just -init and just -init alsoconfig.
-// If PICO-8 config is not present in workspace directory
+// If PICO-8 config is not present in workspace directory then
 // this file is copied there with desktop, root and home paths
-// prefilled with absolute paths to workspace. By default
-// pico8 shell script (and just run command ) ignores the path 
-// settings and instead passes them explicitly via command line. 
+// prefilled with absolute paths to the workspace.
+// End Note!
+// - - -
+// By default the 'pico8' shell script (and 'just run' command) ignores 
+// the path settings and instead passes them explicitly via command line. 
+// - - -
 
 // :: Video Settings
 
