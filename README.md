@@ -1,10 +1,10 @@
-# PICO-8 Development Environment
-
-Just a little self-contained PICO-8 lite dev environment.
+# PICO-8 Workspace
+just a tiny developer environment for the PICO-8 Fantasy Console
+by @olioskar
 
 ## 🎯 What This Is
 
-A **complete PICO-8 development setup** that provides:
+A ** PICO-8 development setup** that provides:
 
 - **⚡ Just-Based Automation**: Simple task automation with `just` commands
 - **📦 Fully Portable**: Copy entire directory to any macOS machine and it works
@@ -40,7 +40,8 @@ pico-8/                           # Development environment root
 
 1. **macOS** (Intel or Apple Silicon)
 2. **Just** task automation: `brew install just`
-3. **PICO-8** The Fantasy Console from Lexaloffle
+3. **Python 3** for config templating (preinstalled on modern macOS; otherwise `brew install python`)
+4. **PICO-8** The Fantasy Console from Lexaloffle
 
 ### Installation
 
