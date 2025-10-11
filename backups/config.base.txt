@@ -5,7 +5,15 @@
 // To generate the default config.txt, delete this file.
 // 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
+// PICO-8 Workspace
+// Note! This config is the base PICO-8 config for 
+// PICO-8 Workspace by @olioskar. Used as a config template
+// on just -init and just -init alsoconfig.
+// If PICO-8 config is not present in workspace directory
+// this file is copied there with desktop, root and home paths
+// prefilled with absolute paths to workspace. By default
+// pico8 shell script (and just run command ) ignores the path 
+// settings and instead passes them explicitly via command line. 
 
 // :: Video Settings
 
@@ -36,7 +44,7 @@ sessions 60 // number of times program has been run
 rmb_key 0 // 0 for none  226 for LALT
 
 // Desktop for saving screenshots etc. Defaults to $HOME/Desktop
-desktop_path /Users/olafur/Development/gamedev/pico-8/workspace/
+desktop_path ./workspace/
 
 // 1 to allow controller input even when application is in background
 read_controllers_in_background 0
@@ -72,11 +80,11 @@ volume 256
 
 
 // Location of pico-8's root folder
-root_path /Users/olafur/Development/gamedev/pico-8/workspace/carts/
+root_path ./workspace/carts/
 
 
 // Location of cartridge save data
-cdata_path /Users/olafur/Development/gamedev/pico-8/workspace/cdata/
+cdata_path ./workspace/cdata/
 
 
 // Specify which player index joystick control begins at (0..7)
