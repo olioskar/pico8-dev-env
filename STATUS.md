@@ -16,8 +16,9 @@
 - **Init Workflow Polish**
   - Runtime auto-detection now installs `PICO-8.app` from directories or zip files and copies manual/license.
   - Smart prompt guides users to supply a runtime path (or skip) without “recipe failed” errors.
-  - `just init` seeds `workspace/config.txt` from `backups/config.base.txt`, stores personalized copy at `backups/config.local.txt`, and documents the flow.
+  - `just init` seeds `workspace/config.txt` from `backups/config.base.txt`, updates it dynamically when Python 3 is available, and stamps backups under `backups/config<DATE>.txt` even when copying the base template verbatim.
   - Summary replaces “Usage Examples” with recipe catalogue plus usage snippets; closes with upbeat sign-off and Lexaloffle appreciation.
+  - Added `just init alsobackup` to capture the existing workspace config before making changes.
 
 - **Run/Make Quality-of-Life**
   - Friendlier icons (`🕹️`, `🔍`, `✨`) and spacing in CLI messages.
@@ -34,7 +35,7 @@
 
 - **Automation:** Driven entirely by `justfile` (Makefile deprecated).
 - **Runtime:** `pico8-runtime/PICO-8.app` optional, auto-copied/installed during `just init`.
-- **Config Handling:** Base template lives at `backups/config.base.txt`; personalized copy at `backups/config.local.txt`.
+- **Config Handling:** Base template lives at `backups/config.base.txt`; dynamic rewrites save timestamped backups (`backups/config<DATE>.txt`) when Python 3 is present, otherwise launch-time flags provide paths.
 - **Templates:** Single starter (`templates/coolgame.p8`) currently available.
 - **Documentation:** README, WARP, and inline help aligned with latest workflow.
 - **Git:** Branch `feature/justfile-cosmetics` pushed with PR #1 awaiting review/merge.

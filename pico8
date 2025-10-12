@@ -3,5 +3,9 @@
 # Get the directory where this script is located
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
-# Run PICO-8 with the local directory as home, and screenshots saving to workspace/screenshots
-"$SCRIPT_DIR/pico8-runtime/PICO-8.app/Contents/MacOS/pico8" -home "$SCRIPT_DIR/workspace" -desktop "$SCRIPT_DIR/workspace/screenshots" "$@" > /dev/null 2>&1 &
+# Run PICO-8 with repo-scoped workspace paths for home/root/desktop
+"$SCRIPT_DIR/pico8-runtime/PICO-8.app/Contents/MacOS/pico8" \
+  -home "$SCRIPT_DIR/workspace" \
+  -root "$SCRIPT_DIR/workspace/carts" \
+  -desktop "$SCRIPT_DIR/workspace/screenshots" \
+  "$@" > /dev/null 2>&1 &

@@ -40,8 +40,7 @@ pico-8/                           # Development environment root
 
 1. **macOS** (Intel or Apple Silicon)
 2. **Just** task automation: `brew install just`
-3. **Python 3** for config templating (preinstalled on modern macOS; otherwise `brew install python`)
-4. **PICO-8** The Fantasy Console from Lexaloffle
+3. **PICO-8** The Fantasy Console from Lexaloffle
 
 ### Installation
 
@@ -51,7 +50,7 @@ pico-8/                           # Development environment root
    ```bash
    just init
    ```
-   `just init` always configures the repository root (even if you invoke it from a subfolder). If no runtime is detected it will search for one, prompt you to supply a path to a `PICO-8.app` bundle or ZIP archive, copy over the manual/license when found, or let you continue without bundling PICO-8. If `workspace/config.txt` is missing, `just init` seeds it from `backups/config.base.txt`, rewrites `desktop_path`, `root_path`, and `cdata_path` for your machine, and stores the personalized copy at `backups/config.local.txt` for safekeeping.
+   `just init` always configures the repository root (even if you invoke it from a subfolder). If no runtime is detected it will search for one, prompt you to supply a path to a `PICO-8.app` bundle or ZIP archive, copy over the manual/license when found, or let you continue without bundling PICO-8. If `workspace/config.txt` is missing, `just init` copies `backups/config.base.txt` into place. When Python 3 is available it rewrites `desktop_path`, `root_path`, and `cdata_path` for your machine and refreshes the header note. Regardless of Python availability, the resulting file is archived with a timestamped backup (e.g. `backups/config20250101-120000.txt`), and runtime flags keep paths correct even when the file stays untouched.
 
 That's it! 🎉
 
@@ -87,6 +86,7 @@ Use `just help <name>` for detailed guidance and examples.
 - `just templates` — Show available cart starters in `templates/`
 - `just init` — Prepare the environment and manage `workspace/config.txt`
   - `just init alsoconfig` — Regenerate config paths (prompts before overwriting)
+  - `just init alsobackup` — Snapshot the current `workspace/config.txt` before running setup
 - `just help pico-8` — Display common PICO-8 command-line switches and manual links
 - `just help` — Print the overview shown by `just` (with thanks to Lexaloffle!)
 
@@ -190,7 +190,7 @@ PICO-8 makes it easy to code using external editors:
 
 The `./pico8` script:
 - Runs PICO-8 in background (non-blocking)
-- Uses local workspace for all PICO-8 data
+- Uses local workspace for all PICO-8 data (home/root/desktop paths passed via CLI)
 - Supports all PICO-8 command line options
 - Screenshots save to `workspace/screenshots/`
 

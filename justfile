@@ -14,6 +14,7 @@ runtime_dir := justfile_dir / "pico8-runtime"
 carts_dir := workspace_dir / "carts"
 mycarts_dir := carts_dir / "mycarts"
 other_dir := carts_dir / "other"
+scripts_dir := justfile_dir / "scripts"
 
 # Show available recipes and environment info
 default:
@@ -167,10 +168,11 @@ _help-init:
     printf '%s\n' "${yellow}Usage:${reset}"
     printf '  just init                    # Perform setup and keep existing configs intact\n'
     printf '  just init alsoconfig         # Regenerate config.txt (prompts before overwriting)\n'
+    printf '  just init alsobackup         # Snapshot current workspace config to backups/\n'
     printf '\n'
     printf '%s\n' "${yellow}Helpful hints:${reset}"
     printf '  • If PICO-8.app is missing, place it under pico8-runtime/ or provide a path when prompted.\n'
-    printf '  • A personalised copy lives at backups/config.local.txt for reference.\n'
+    printf '  • When Python 3 is available, timestamped backups land in backups/config<DATE>.txt.\n'
     printf '  • Need to refresh paths later? Re-run: just init alsoconfig\n'
 
 _help-pico:
@@ -638,7 +640,7 @@ _init-config mode="":
 
     base_config="{{ justfile_dir }}/backups/config.base.txt"
     workspace_config="{{ workspace_dir }}/config.txt"
-    backup_config="{{ justfile_dir }}/backups/config.local.txt"
+    backup_dir="{{ justfile_dir }}/backups"
     workspace_raw="{{ workspace_dir }}"
     workspace_dir_trimmed="${workspace_raw%/}"
     desktop_path="${workspace_dir_trimmed}/"
@@ -650,14 +652,28 @@ _init-config mode="":
         return 0
     fi
 
-    tmp="$(mktemp)"
+    python_available="false"
+    if command -v python3 >/dev/null 2>&1; then
+        python_available="true"
+    fi
 
-    python3 -c "import sys, pathlib; base=pathlib.Path(sys.argv[1]); tmp=pathlib.Path(sys.argv[2]); desktop, root, cdata = sys.argv[3:6]; tmp.write_text('\n'.join((f'desktop_path {desktop}' if line.startswith('desktop_path ') else f'root_path {root}' if line.startswith('root_path ') else f'cdata_path {cdata}' if line.startswith('cdata_path ') else line) for line in base.read_text().splitlines()) + '\n')" "$base_config" "$tmp" "$desktop_path" "$root_path" "$cdata_path"
+    tmp=""
+    if [[ "$python_available" == "true" ]]; then
+        tmp="$(mktemp)"
+        python3 "{{ scripts_dir }}/rewrite_config.py" "$base_config" "$tmp" "$desktop_path" "$root_path" "$cdata_path"
+    else
+        echo "ℹ️ Python not found; skipping dynamic config updates."
+        echo ""
+    fi
 
-    mkdir -p "${backup_config:h}"
-    cp "$tmp" "$backup_config"
-    echo "💾 Config backup updated at $backup_config"
-    echo ""
+    if [[ "$mode" == "alsobackup" && -f "$workspace_config" ]]; then
+        mkdir -p "$backup_dir"
+        timestamp="$(date "+%Y%m%d-%H%M%S")"
+        pre_backup="$backup_dir/config${timestamp}.txt"
+        cp "$workspace_config" "$pre_backup"
+        echo "💾 Existing config backed up at $pre_backup"
+        echo ""
+    fi
 
     should_copy="false"
     if [[ -f "$workspace_config" ]]; then
@@ -680,12 +696,27 @@ _init-config mode="":
     fi
 
     if [[ "$should_copy" == "true" ]]; then
-        cp "$tmp" "$workspace_config"
-        echo "✨ Workspace config ready at $workspace_config"
+        mkdir -p "$backup_dir"
+        timestamp="$(date "+%Y%m%d-%H%M%S")"
+        backup_file="$backup_dir/config${timestamp}.txt"
+        if [[ "$python_available" == "true" ]]; then
+            cp "$tmp" "$workspace_config"
+            cp "$tmp" "$backup_file"
+            echo "✨ Workspace config ready at $workspace_config"
+            echo "💾 Config backup saved at $backup_file"
+        else
+            cp "$base_config" "$workspace_config"
+            cp "$workspace_config" "$backup_file"
+            echo "✨ Workspace config ready at $workspace_config"
+            echo "💾 Config backup saved at $backup_file"
+            echo "ℹ️ Python not found; copied base config and relying on CLI path overrides."
+        fi
         echo ""
     fi
 
-    rm -f "$tmp"
+    if [[ -n "$tmp" ]]; then
+        rm -f "$tmp"
+    fi
 
 # Check and fix launch script permissions
 _check-script:
@@ -734,6 +765,7 @@ _init-summary:
     @echo "  just templates   Show template starters living in templates/"
     @echo "  just init        Prepare the environment and manage config.txt"
     @echo "    just init alsoconfig         # Regenerate workspace/config.txt (with confirmation)"
+    @echo "    just init alsobackup         # Snapshot current workspace config to backups/"
     @echo "  just help pico-8 Explore PICO-8 command-line switches and docs"
     @echo ""
     @echo "🎯 Development Workflow:"
